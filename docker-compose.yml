@@ -1,0 +1,34 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    volumes: 
+      - db_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=shop_1234
+      - POSTGRES_USER=root
+      - POSTGRES_DB=shop_db
+    
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    container_name: api_container
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_SOURCE=postgres://root:shop_1234@postgres:5432/shop_db?sslmode=disable
+    depends_on:
+      - postgres
+    entrypoint: ["/app/wait-for.sh", "postgres:5432","--","/app/start.sh"] 
+    command: ["/app/main"]   
+
+
+volumes:
+  db_volume:
+
+networks:
+  shopnetwork:
+    driver: bridge
+

@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "./pkg/pb";
+
+import "google/protobuf/timestamp.proto";
+
+service AuthServce {
+    rpc Register(RegisterRequest) returns(RegisterResponse){}
+    rpc Login(LoginRequest) returns(LoginResponse){}
+    rpc Validate(ValidateRequest) returns(ValidateResponse){}
+}
+
+//Register
+message RegisterRequest{
+    string email = 1;
+    string password = 2;
+}
+
+message RegisterResponse{
+    int32 status = 1;
+    string error = 2;
+}
+
+//Login
+message LoginRequest{
+    string email = 1;
+    string password =2;
+}
+
+message LoginResponse{
+    int32 status = 1;
+    string error = 2;
+    string token = 3;
+    Data data = 4;
+}
+
+message Data{
+    int64 id = 1;
+    string email = 2;
+    int64 roleId = 3;
+    int64 accountId = 4;
+    bool active = 5;
+    google.protobuf.Timestamp login_at =6;
+    google.protobuf.Timestamp created_at = 7;
+}
+
+//Validate 
+message ValidateRequest{
+    string token = 1;
+}
+
+message ValidateResponse{
+    int32 status = 1;
+    string error = 2;
+}
